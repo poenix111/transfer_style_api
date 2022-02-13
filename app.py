@@ -18,11 +18,6 @@ from transfer import Transfer
 app = Flask(__name__)
 transfer = Transfer()
 
-@app.route('/')
-def hello():
-    return 'Hello, World!'
-
-
 @app.route('/transfer', methods=['POST'])
 def transfer_image():
     if request.method == 'POST':
