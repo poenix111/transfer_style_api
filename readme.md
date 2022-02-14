@@ -116,11 +116,11 @@ To get a local copy up and running follow these simple example steps.
 localhost:5000/image-transfer [POST]
 
 Body
-```json
+```jsonc
   {
-    "content_image": "insert here b64 image",
-    "style_image": "insert here b64 image",
-    "iterations": 10 insert here how many iterations do you want.
+    "content_image": "insert here base64 image",
+    "style_image": "insert here base64 image",
+    "iterations": 10 //insert here how many iterations do you want.
   }
 ```
 <p align="right">(<a href="#top">back to top</a>)</p>
