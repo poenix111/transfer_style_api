@@ -13,7 +13,7 @@ import io
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 
-class Transfer:
+class ImageTransfer:
 
     def __init__(self):
         self.content_layers = ['block5_conv2'] 
@@ -26,6 +26,7 @@ class Transfer:
 
         self.num_content_layers = len(self.content_layers)
         self.num_style_layers = len(self.style_layers)
+
     def get_model(self):  
         vgg = tf.keras.applications.vgg19.VGG19(include_top=False, weights='imagenet')
         vgg.trainable = False
@@ -33,6 +34,7 @@ class Transfer:
         content_outputs = [vgg.get_layer(name).output for name in self.content_layers]
         model_outputs = style_outputs + content_outputs
         return models.Model(vgg.input, model_outputs)
+
     def load_img(self, base64_string):
         max_dim = 512
         img = Image.open(io.BytesIO(base64.b64decode(base64_string)))
@@ -66,12 +68,9 @@ class Transfer:
             content_image = self.load_and_process_img(base64_base_image)
             style_image = self.load_and_process_img(base64_style_path)
 
-            # batch compute content and style features
             style_outputs = model(style_image)
             content_outputs = model(content_image)
             
-            
-            # Get the style and content feature representations from our model  
             style_features = [style_layer[0] for style_layer in style_outputs[:self.num_style_layers]]
             content_features = [content_layer[0] for content_layer in content_outputs[self.num_style_layers:]]
             return style_features, content_features
@@ -115,7 +114,6 @@ class Transfer:
         if len(x.shape) != 3:
             raise ValueError("Invalid input to deprocessing image")
         
-        # perform the inverse of the preprocessing step
         x[:, :, 0] += 103.939
         x[:, :, 1] += 116.779
         x[:, :, 2] += 123.68
@@ -126,7 +124,6 @@ class Transfer:
 
     def load_and_process_img(self, base64_image):
         img = self.load_img(base64_image)
-        # img.resize(2000, 2000)
         img = tf.keras.applications.vgg19.preprocess_input(img)
         return img
 
@@ -167,11 +164,9 @@ class Transfer:
             init_image.assign(clipped)
             
             if loss < best_loss:
-            # Update best loss and best image from total loss. 
                 best_loss = loss
                 best_img = self.deprocess_img(init_image.numpy())
 
-        # self.show_results(best_img,base64_base_image, base64_style_path)
         try:
             best_img = Image.fromarray(best_img, 'RGB')
             img_byte_arr = io.BytesIO()
